@@ -186,14 +186,13 @@ function toDate(epoch) {
 		     'retention_interval': interval,
 		     'retention_buckets': buckets
 		 };
-		 MP.api.custom_query(script, params).done(function(results) {
+		 MP.api.jql(script, params).done(function(results) {
 		 	console.log(results);
 		 	if (results[0]) {
 		 		eventChart.MPChart('setData', results[0]);
 		 	}
 		 });
 		}
-		runQuery();
 		dateSelect.on('change', function() {
 		 runQuery();
 		});
