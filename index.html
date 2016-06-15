@@ -4,9 +4,105 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dateFormat/1.0/jquery.dateFormat.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/mixpanel-platform/mixpanel-unicorn-1-855433-K9huT8m/master/styles.css">
   </head>
   <body class="mixpanel-platform-body">
-  	<script id='query'>
+
+  	<div class="mixpanel-platform-section">
+  	  <h2>Retention</h2>
+  		<div style="clear: both;"></div>
+  	</div>
+  	<div class="mixpanel-platform-section">
+      <div id="dateSelect" style="float: left;"></div>
+      <h3>1st Event:</h3>
+      <div id="pre" style="float: left;"></div>
+      <h3>2nd Event:</h3>
+      <div id="start" style="float: left;"></div>
+      <div style="clear: both;"></div>
+      <h3>Retention Event:</h3>
+      <div id="retention" style="float: left;"></div>
+      <div style="clear: both;"></div>
+    </div>
+    <div class="mixpanel-platform-section">
+      <h3>Retention Interval:</h3>
+      <div id="interval" style="float: left;"></div>
+      <h3>Buckets:</h3>
+      <input id="buckets" type="text" style="float: left;" value="0,1,7,14,30">
+      <div style="clear: both;"></div>
+    </div>
+    <div id="chart"></div>
+    <script>
+		var script = document.getElementById('query').innerHTML;
+		var eventChart = $('#chart').MPChart({
+		 chartType: 'line'
+		});
+		var dateSelect = $('#dateSelect').MPDatepicker();
+		var startEvent = $('#start').MPEventSelect();
+		var preEvent = $('#pre').MPEventSelect();
+		var retentionEvent = $('#retention').MPEventSelect();
+		var retentionInterval = $('#interval').MPSelect({
+		 items: [{
+		     label: '1',
+		     value: 1
+		 }, {
+		     label: '7',
+		     value: 7
+		 }, {
+		     label: '14',
+		     value: 14
+		 }, {
+		     label: '30',
+		     value: 30
+		 }]
+		});
+		retentionInterval.val(1);
+		function runQuery() {
+		 var from_date = dateSelect.MPDatepicker('value').from.toISOString().slice(0, -14);
+		 var to_date = dateSelect.MPDatepicker('value').to.toISOString().slice(0, -14);
+		 var pre = preEvent.MPEventSelect('value');
+		 var start = startEvent.MPEventSelect('value');
+		 var retention = retentionEvent.MPEventSelect('value');
+		 var interval = retentionInterval.MPSelect('value') * 86400000;
+		 var bucketText = document.getElementById('buckets').value.split(',');
+		 var buckets = [];
+		 for (var i = 0; i < bucketText.length; i++) {
+		 	buckets.push(Number(bucketText[i].replace(/\s+/g, '')));
+		 }
+		 var params = {
+		     'from_date': from_date,
+		     'to_date': to_date,
+		     'pre_event': pre,
+		     'start_event': start,
+		     'retention_event': retention,
+		     'retention_interval': interval,
+		     'retention_buckets': buckets
+		 };
+		 MP.api.custom_query(script, params).done(function(results) {
+		 	console.log(results);
+		 	if (results[0]) {
+		 		eventChart.MPChart('setData', results[0]);
+		 	}
+		 });
+		}
+		runQuery();
+		dateSelect.on('change', function() {
+		 runQuery();
+		});
+		preEvent.on('change', function(e, selection) {
+		 runQuery();
+		});
+		startEvent.on('change', function(e, selection) {
+		 runQuery();
+		});
+		retentionEvent.on('change', function(e, selection) {
+		 runQuery();
+		});
+		retentionInterval.on('change', function(e, selection) {
+		 runQuery();
+		});
+    </script>
+      	<script id='query'>
 		function main() {
   return Events({
     from_date: params.from_date,
@@ -114,99 +210,6 @@ function toDate(epoch) {
 	var d = new Date(epoch);
 	return d.getFullYear() + '-' + (d.getMonth() < 9 ? ('0' + (d.getMonth() + 1)) : (d.getMonth() + 1)) + '-' + (d.getDate() < 10 ? ('0' + d.getDate()) : d.getDate());
 }
-    </script>
-  	<div class="mixpanel-platform-section">
-  		<div style="display:flex;justify-content:center;align-items:center;width:100%;">Retention (Gaming Style)</div>
-  		<div style="clear: both;"></div>
-  	</div>
-  	<div class="mixpanel-platform-section">
-      <div id="dateSelect" style="float: left;"></div>
-      <div id="preEvent" style="float: left;">1st Event:</div>
-      <div id="pre" style="float: left;"></div>
-      <div id="start" style="float: right;"></div>
-      <div id="startEvent" style="float: right;">2nd Event:</div>
-      <div style="clear: both;"></div>
-      <div id="retention" style="float: left;"></div>
-      <div id="retentionEvent" style="float: left;">Retention Event:</div>
-      <div style="clear: both;"></div>
-    </div>
-    <div class="mixpanel-platform-section">
-      <div style="float: left">Retention Interval:</div>
-      <div id="interval" style="float: left;"></div>
-      <div style="float: left">Buckets:</div>
-      <input id="buckets" type="text" style="float: left;" value="0,1,7,14,30">
-      <div style="clear: both;"></div>
-    </div>
-    <div id="chart"></div>
-    <script>
-		var script = document.getElementById('query').innerHTML;
-		var eventChart = $('#chart').MPChart({
-		 chartType: 'line'
-		});
-		var dateSelect = $('#dateSelect').MPDatepicker();
-		var startEvent = $('#start').MPEventSelect();
-		var preEvent = $('#pre').MPEventSelect();
-		var retentionEvent = $('#retention').MPEventSelect();
-		var retentionInterval = $('#interval').MPSelect({
-		 items: [{
-		     label: '1',
-		     value: 1
-		 }, {
-		     label: '7',
-		     value: 7
-		 }, {
-		     label: '14',
-		     value: 14
-		 }, {
-		     label: '30',
-		     value: 30
-		 }]
-		});
-		retentionInterval.val(1);
-		function runQuery() {
-		 var from_date = dateSelect.MPDatepicker('value').from.toISOString().slice(0, -14);
-		 var to_date = dateSelect.MPDatepicker('value').to.toISOString().slice(0, -14);
-		 var pre = preEvent.MPEventSelect('value');
-		 var start = startEvent.MPEventSelect('value');
-		 var retention = retentionEvent.MPEventSelect('value');
-		 var interval = retentionInterval.MPSelect('value') * 86400000;
-		 var bucketText = document.getElementById('buckets').value.split(',');
-		 var buckets = [];
-		 for (var i = 0; i < bucketText.length; i++) {
-		 	buckets.push(Number(bucketText[i].replace(/\s+/g, '')));
-		 }
-		 var params = {
-		     'from_date': from_date,
-		     'to_date': to_date,
-		     'pre_event': pre,
-		     'start_event': start,
-		     'retention_event': retention,
-		     'retention_interval': interval,
-		     'retention_buckets': buckets
-		 };
-		 MP.api.custom_query(script, params).done(function(results) {
-		 	console.log(results);
-		 	if (results[0]) {
-		 		eventChart.MPChart('setData', results[0]);
-		 	}
-		 });
-		}
-		runQuery();
-		dateSelect.on('change', function() {
-		 runQuery();
-		});
-		preEvent.on('change', function(e, selection) {
-		 runQuery();
-		});
-		startEvent.on('change', function(e, selection) {
-		 runQuery();
-		});
-		retentionEvent.on('change', function(e, selection) {
-		 runQuery();
-		});
-		retentionInterval.on('change', function(e, selection) {
-		 runQuery();
-		});
     </script>
   </body>
 </html>
