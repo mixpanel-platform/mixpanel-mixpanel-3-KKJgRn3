@@ -3,15 +3,13 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
-    <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/mixpanel-platform/mixpanel-unicorn-1-855433-K9huT8m/master/styles.css">
+  <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/mixpanel-platform/mixpanel-unicorn-1-855433-K9huT8m/master/styles.css">
 
   </head>
   <body class="mixpanel-platform-body">
-  
   	<div class="mixpanel-platform-section">
       <h2>Retention</h2>
-  		<div style="clear: both;"></div>
   	</div>
   	<div class="mixpanel-platform-section">
       <h3>Date Range</h3>
@@ -31,6 +29,8 @@
       <div style="clear: both;"></div>
     </div>
     <div id="chart"></div>
+      <div style="clear: both;"></div>
+
     	<script id='query'>
 		function main() {
   return Events({
@@ -193,6 +193,7 @@ function toDate(epoch) {
 		 	}
 		 });
 		}
+		runQuery();
 		dateSelect.on('change', function() {
 		 runQuery();
 		});
