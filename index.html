@@ -120,7 +120,7 @@
       	  	  	}
       	  	  	item = items[i].value[params.retention_buckets[j]];
       	  	  	if (item.total > 0) {
-      	  	  		data[index][toDate(items[i].key[0])] = Math.round(10000 * item.converted / item.total) / 100; 
+      	  	  		data[index][toDate(items[i].key[0])] = item.total; 
       	  	  	}
       	  	  }
       	  }
