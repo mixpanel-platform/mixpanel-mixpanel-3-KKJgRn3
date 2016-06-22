@@ -29,16 +29,18 @@
     <div style="clear: both;"></div>
     </div>
     <div class="mixpanel-platform-section">
-      <h3>Retention Interval</h3>
+      <div style="float:left; margin-right:20px;">
+        <h3>Retention Interval</h3>
       <div id="interval"></div>
-      <h3>Buckets</h3>
+      </div>
+      <div style="float:left; margin-right:20px;">
+        <h3>Buckets</h3>
       <input id="buckets" type="text" value="0,1,7,14,30">
+      </div>
       <div style="clear: both;"></div>
     </div>
     <div id="chart"></div>
-      <div style="clear: both;"></div>
-
-    	<script id='query'>
+  <script id='query'>
 		function main() {
   return Events({
     from_date: params.from_date,
