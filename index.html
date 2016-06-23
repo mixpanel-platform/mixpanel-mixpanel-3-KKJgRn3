@@ -30,7 +30,7 @@
     </div>
     <div id="table"></div>
   <script id='query'>
-    function main() {
+function main() {
   return Events({
     from_date: params.from_date,
     to_date: params.to_date,
@@ -53,8 +53,8 @@
       return state;
   }).filter(function(item) {return item.value.start})
   .map(function(item) {
-    var rentention = {};
-    rentention[item.value.pre] = {People: 1, retention: item.value.retention};
+    var rentention = {People: 1};
+    _.extend(rentention, item.value.retention)
     return rentention;
   })
     .reduce(mixpanel.reducer.object_merge());
