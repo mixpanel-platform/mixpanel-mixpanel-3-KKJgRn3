@@ -30,38 +30,37 @@
     </div>
     <div id="chart"></div>
   <script id='query'>
-      function main() {
-        return Events({
-          from_date: params.from_date,
-          to_date: params.to_date,
-          event_selectors: [{event: params.pre_event}, {event: params.start_event}, {event: params.retention_event}]
-        })
-        .groupByUser(function(state, events) {
-            state = state || {retention: {}};
-            _.each(events, function(v,k) {
-              if (!state.pre && v.name == params.pre_event) {
-                state.pre = v.time;
-              } 
-               else if (state.pre && !state.start && v.name == params.start_event) {
-                state.start = v.time;
-              } 
-               else if (state.pre && state.start && v.name == params.retention_event) {
-                state.retention[new Date(v.time).toISOString().split('T')[0]] = 1;
-              } 
-            });
-            return state;
-        }).filter(function(item) {return item.value.start})
-        .map(function(item) {
-          return {
-            People: 1,
-            Retention: {
-                daily: 
-                item.value.retention
-            }
-          }
-        })
-          .reduce(mixpanel.reducer.object_merge());
-      }
+    function main() {
+      return Events({
+        from_date: params.from_date,
+        to_date: params.to_date,
+        event_selectors: [{event: params.pre_event}, {event: params.start_event}, {event: params.retention_event}]
+      })
+      .groupByUser(function(state, events) {
+          state = state || {retention: {}};
+          _.each(events, function(v,k) {
+            if (!state.pre && v.name == params.pre_event) {
+              state.pre = new Date(v.time).toISOString().split('T')[0];
+            } 
+             else if (state.pre && !state.start && v.name == params.start_event) {
+              state.start = new Date(v.time).toISOString().split('T')[0];
+            } 
+             else if (state.pre && state.start && v.name == params.retention_event) {
+              state.retention[new Date(v.time).toISOString().split('T')[0]] = 1;
+            } 
+          });
+          return state;
+      }).filter(function(item) {return item.value.start})
+      .map(function(item) {
+        var rentention = {};
+        rentention[item.value.pre] = item.value.retention;
+        return {
+          People: 1,
+          Retention: rentention
+        }
+      })
+        .reduce(mixpanel.reducer.object_merge());
+    }
     </script>
     <script>
 		var script = document.getElementById('query').innerHTML;
