@@ -38,6 +38,9 @@ function main() {
   })
   .groupByUser(function(state, events) {
       state = state || {retention: {}};
+      for(var i = 0; i < 15; i++){
+        state.retention[i] = 0;
+      }
       _.each(events, function(v,k) {
         if (!state.pre && v.name == params.pre_event) {
           state.pre = new Date(v.time).toISOString().split('T')[0];
@@ -52,7 +55,7 @@ function main() {
       });
       return state;
   }).filter(function(item) {return item.value.start})
-   .map(function(item) {
+  .map(function(item) {
     var rentention = {};
     rentention[item.value.pre] = {People: 1};
     _.extend(rentention[item.value.pre], item.value.retention)
