@@ -85,7 +85,7 @@
 		 };
 		 MP.api.jql(script, params).done(function(results) {
 		 	if (results[0]) {
-		 		eventChart.MPChart('setData', results[0]);
+		 		eventChart.MPTable('setData', results[0]);
 		 	}
 		 });
 		}
