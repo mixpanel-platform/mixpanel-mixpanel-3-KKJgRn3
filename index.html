@@ -28,7 +28,7 @@
       </div>
     <div style="clear: both;"></div>
     </div>
-    <div id="chart"></div>
+    <div id="table"></div>
   <script id='query'>
     function main() {
   return Events({
@@ -62,8 +62,8 @@
     </script>
     <script>
 		var script = document.getElementById('query').innerHTML;
-		var eventChart = $('#chart').MPChart({
-		 chartType: 'line'
+		var eventChart = $('#table').MPChart({
+		 showPercentages: true,
 		});
 		var dateSelect = $('#dateSelect').MPDatepicker();
 		var startEvent = $('#start').MPEventSelect();
@@ -85,7 +85,7 @@
 		 };
 		 MP.api.jql(script, params).done(function(results) {
 		 	if (results[0]) {
-		 		eventChart.MPChart('setData', results[0].Retention);
+		 		eventChart.MPChart('setData', results[0]);
 		 	}
 		 });
 		}
